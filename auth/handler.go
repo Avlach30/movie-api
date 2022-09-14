@@ -108,3 +108,31 @@ func (handler *authHandler) SignUpHandler(context *gin.Context) {
 		context.JSON(http.StatusCreated, successResponse)
 	}
 }
+
+func (handler *authHandler) LogInHandler (context *gin.Context) {
+	var input LogInInput //* Mendefinisikan variabel dengan type LogInInput struct
+
+	err := context.ShouldBindJSON(&input) //*Konversi JSON input ke struct
+	if err != nil {
+		errors := helper.ErrorValidationResponse(err)
+
+		errorMsg := gin.H{"errors": errors}
+
+		errorResponse := helper.ApiFailedResponse(errorMsg)
+		context.JSON(http.StatusUnprocessableEntity, errorResponse)
+		return
+	}
+
+	user, token, err := handler.authService.LogIn(input)
+	if err != nil {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+
+		context.JSON(http.StatusUnauthorized, errorResponse)
+		return
+	}
+	
+	responseFormatter := FormatUserLoginResponse(user, token)
+	successResponse := helper.ApiSuccessResponse("Log in successfully", responseFormatter)
+
+	context.JSON(http.StatusOK, successResponse)
+}
