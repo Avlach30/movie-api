@@ -6,3 +6,8 @@ type SignUpInput struct {
 	Password string `form:"password" binding:"required,min=10,alphanum"`
 	Avatar   string 
 }
+
+type LogInInput struct {
+	Email      string `json:"email" binding:"required,email"`
+	Password   string `json:"password" binding:"required"`
+}
