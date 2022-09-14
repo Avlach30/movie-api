@@ -28,6 +28,7 @@ func main() {
 
 	firstVerAPI.POST("/auth/signup-customer", userHandler.SignUpHandler)
 	firstVerAPI.POST("/auth/admin/signup", userHandler.SignUpHandler)
+	firstVerAPI.POST("/auth/login", userHandler.LogInHandler)
 
 	router.Run()
 }
