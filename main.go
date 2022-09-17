@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"movie-api/auth"
-
+	"movie-api/movie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -23,12 +23,18 @@ func main() {
 	userService := auth.NewService(userRepository)
 	userHandler := auth.NewAuthHandler(userService)
 
+	movieRepository := movie.NewRepository(db)
+	movieService := movie.NewService(movieRepository)
+	movieHandler := movie.NewMovieHandler(movieService)
+
 	router := gin.Default()
 	firstVerAPI := router.Group("/api/v1")
 
 	firstVerAPI.POST("/auth/signup-customer", userHandler.SignUpHandler)
 	firstVerAPI.POST("/auth/admin/signup", userHandler.SignUpHandler)
 	firstVerAPI.POST("/auth/login", userHandler.LogInHandler)
+
+	firstVerAPI.GET("/movies", movieHandler.GetAllMovieWithTags)
 
 	router.Run()
 }
