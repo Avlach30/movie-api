@@ -4,6 +4,7 @@ import (
 	"movie-api/auth"
 	"movie-api/config"
 	"movie-api/movie"
+	"movie-api/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,8 +28,8 @@ func main() {
 
 	firstVerAPI.GET("/movies", movieHandler.GetAllMovieWithTags)
 
-	firstVerAPI.GET("/backoffice/movies", movieHandler.GetAllMovieWithTags)
-	firstVerAPI.POST("/backoffice/movies", movieHandler.CreateNewMovieWithTags)
+	firstVerAPI.GET("/backoffice/movies",  middleware.AuthorizationMiddleware(userService), movieHandler.GetAllMovieWithTags)
+	firstVerAPI.POST("/backoffice/movies", middleware.AuthorizationMiddleware(userService), movieHandler.CreateNewMovieWithTags)
 
 	router.Run()
 }
