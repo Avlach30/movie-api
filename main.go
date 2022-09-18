@@ -36,5 +36,8 @@ func main() {
 
 	firstVerAPI.GET("/movies", movieHandler.GetAllMovieWithTags)
 
+	firstVerAPI.GET("/backoffice/movies", movieHandler.GetAllMovieWithTags)
+	firstVerAPI.POST("/backoffice/movies", movieHandler.CreateNewMovieWithTags)
+
 	router.Run()
 }
