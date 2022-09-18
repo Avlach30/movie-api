@@ -1,6 +1,7 @@
 package movie
 
 import (
+	"movie-api/auth"
 	"movie-api/helper"
 	"net/http"
 	"path/filepath"
@@ -17,6 +18,18 @@ func NewMovieHandler(service Service) *movieHandler {
 }
 
 func (handler *movieHandler) GetAllMovieWithTags(context *gin.Context) {
+
+	if (context.Request.URL.String() == "/api/v1/backoffice/movies") {
+		loggedUser := context.MustGet("user").(auth.User)
+
+		//* If logged user not found (invalid token / authorization header)
+		if (loggedUser.ID == 0) {
+			errorResponse := helper.ApiFailedResponse("Unauthorized")
+			context.JSON(http.StatusUnauthorized, errorResponse)
+			return
+		}
+	}
+
 	movies, err := handler.service.FetchAllMovieWithTags()
 	if (err != nil) {
 		errorResponse := helper.ApiFailedResponse(err.Error())
@@ -29,6 +42,14 @@ func (handler *movieHandler) GetAllMovieWithTags(context *gin.Context) {
 }
 
 func (handler *movieHandler) CreateNewMovieWithTags(context *gin.Context) {
+	loggedUser := context.MustGet("user").(auth.User)
+
+	if (!loggedUser.IsAdmin) {
+		errorResponse := helper.ApiFailedResponse("Sorry!, only admin can create new movie")
+		context.JSON(http.StatusForbidden, errorResponse)
+		return
+	}
+
 	input := CreateNewMovieInput{
 		Title: context.PostForm("title"),
 		Overview: context.PostForm("overview"),
