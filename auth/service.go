@@ -13,6 +13,8 @@ type Service interface {
 	UploadAvatarImage(fileLocation string) (string, error)
 	LogIn(input LogInInput) (User, string, error)
 	GenerateToken(userId int, email string, isAdmin bool) (string, error)
+	ValidateToken(token string) (*jwt.Token, error)
+	FindUserById(id int) (User, error)
 }
 
 type service struct {
@@ -117,4 +119,36 @@ func (service *service) LogIn(input LogInInput) (User, string, error) {
 	}
 
 	return user, userToken, nil
+}
+
+func (service *service) ValidateToken(encodedToken string) (*jwt.Token, error) {
+
+	token, err := jwt.Parse(encodedToken, func(token *jwt.Token)(interface{}, error){
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if (!ok) {
+			return nil, errors.New("invalid token")
+		}
+
+		return []byte("$2a$08$UcyjEygcPA/XaeUp85sQjuOhithx14/Ai3D5lYPixLrMrSQG2NIFy"), nil
+	})
+
+	if (err != nil) {
+		return token, err
+	}
+
+	return token, nil
+
+}
+
+func (service *service) FindUserById(id int) (User, error) {
+	user, err := service.repository.FindUserById(id)
+	if (err != nil) {
+		return user, err
+	} 
+
+	if (user.ID == 0) {
+		return user, errors.New("sorry, cannot find user with that id")
+	}
+
+	return user, nil
 }
