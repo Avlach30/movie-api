@@ -12,6 +12,14 @@ type GetEachMoviesResponse struct {
 	Tags     []movietag.GetTagsResponse `json:"tags"`
 }
 
+type MovieResponse struct {
+	ID       	int                        `json:"id"`
+	Title    	string                     `json:"title"`
+	Overview 	string                     `json:"overview"`
+	Poster   	string                     `json:"poster"`
+	PlayUntil 	string					   `json:"play_until"`
+}
+
 func FormatResponseGetEachMovie(movie Movie) GetEachMoviesResponse {
 	format := GetEachMoviesResponse{
 		ID: movie.ID,
@@ -40,4 +48,16 @@ func FormatResponseGetMovies(movies []Movie) []GetEachMoviesResponse {
 	}
 
 	return moviesWithTagFormatter
+}
+
+func FormatResponseCreateNewMovie(movie Movie) MovieResponse {
+	format := MovieResponse{
+		ID: movie.ID,
+		Title: movie.Title,
+		Overview: movie.Overview,
+		Poster: movie.Poster,
+		PlayUntil: movie.PlayUntil,
+	}
+
+	return format
 }
