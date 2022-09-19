@@ -4,6 +4,7 @@ import "errors"
 
 type Service interface {
 	SaveNewStudio(input CreateNewStudioInput) (Studio, error)
+	FindStudioByNumber(studioNumber int) (Studio, error)
 }
 
 type service struct {
@@ -26,4 +27,14 @@ func (service *service) SaveNewStudio(input CreateNewStudioInput) (Studio, error
 	}
 
 	return newStudio, nil
+}
+
+func (service *service) FindStudioByNumber(studioNumber int) (Studio, error) {
+	
+	movieStudio, err := service.repository.FindStudioByNumber(studioNumber)
+	if (err != nil) {
+		return movieStudio, errors.New("failed to find movie studio by number")
+	}
+
+	return movieStudio, nil
 }
