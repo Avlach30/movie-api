@@ -37,6 +37,22 @@ func (handler *movieStudioHandler) CreateNewMovieStudio(context *gin.Context) {
 		return
 	}
 
+	studio, err := handler.movieStudioService.FindStudioByNumber(input.StudioNumber)
+	if err != nil {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+
+		context.JSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	//* If movie studio already exist
+	if (studio.ID != 0) {
+		errorResponse := helper.ApiFailedResponse("Sorry! movie studio already exist")
+
+		context.JSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
 	movieStudio, err := handler.movieStudioService.SaveNewStudio(input)
 	if err != nil {
 		errorResponse := helper.ApiFailedResponse(err.Error())
