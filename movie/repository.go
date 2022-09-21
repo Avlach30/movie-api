@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	GetMoviesWithTags() ([]Movie, error)
 	SaveNewMovieWithTags(movie Movie, movieTags []string) (Movie, []string, error)
+	GetMovieById(movieId int) (Movie, error)
 }
 
 type repository struct {
@@ -66,4 +67,15 @@ func (repository *repository) SaveNewMovieWithTags(movie Movie, movieTags []stri
 	transaction.Commit()
 
 	return movie, movieTags, nil
+}
+
+func (repository *repository) GetMovieById(movieId int) (Movie, error) {
+	var movie Movie
+
+	err := repository.db.Where("id = ?", movieId).Find(&movie).Error
+	if (err != nil) {
+		return movie, errors.New("failed to find movie by id")
+	}
+
+	return movie, nil
 }
