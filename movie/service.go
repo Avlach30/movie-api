@@ -7,6 +7,7 @@ import (
 type Service interface {
 	FetchAllMovieWithTags() ([]Movie, error)
 	SaveNewMovieWithTags(input CreateNewMovieInput) (Movie, error)
+	FetchMovieById(movieId int) (Movie, error)
 }
 
 type service struct {
@@ -42,4 +43,13 @@ func (service *service) SaveNewMovieWithTags(input CreateNewMovieInput) (Movie, 
 	}
 
 	return newMovie, nil
+}
+
+func (service *service) FetchMovieById(movieId int) (Movie, error) {
+	movie, err := service.repository.GetMovieById(movieId)
+	if (err != nil) {
+		return movie, errors.New("failed to find movie by id")
+	}
+
+	return movie, nil
 }
