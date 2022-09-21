@@ -7,6 +7,7 @@ import (
 	"movie-api/movie"
 	moviestudio "movie-api/movie-studio"
 	movieschedule "movie-api/movie-schedule"
+	movietag "movie-api/movie-tag"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +30,10 @@ func main() {
 	movieScheduleService := movieschedule.NewService(movieScheduleRepository)
 	movieScheduleHandler := movieschedule.NewMovieScheduleHandler(movieScheduleService, movieService, movieStudioService)
 
+	movieTagRepository := movietag.NewRepository(db)
+	movieTagService := movietag.NewService(movieTagRepository)
+	movieTagHandler := movietag.NewMovieTagHandler(movieTagService)
+
 	router := gin.Default()
 	firstVerAPI := router.Group("/api/v1")
 
@@ -44,6 +49,8 @@ func main() {
 	firstVerAPI.POST("/backoffice/studios", middleware.AuthorizationMiddleware(userService), movieStudioHandler.CreateNewMovieStudio)
 
 	firstVerAPI.POST("/backoffice/schedules", middleware.AuthorizationMiddleware(userService), movieScheduleHandler.CreateNewMovieSchedule)
+
+	firstVerAPI.GET("/backoffice/movies/tags", middleware.AuthorizationMiddleware(userService), movieTagHandler.GetAllTags)
 
 	router.Run()
 }
