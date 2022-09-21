@@ -8,6 +8,7 @@ import (
 type Repository interface {
 	SaveNewStudio(studio Studio) (Studio, error)
 	FindStudioByNumber(studioNumber int) (Studio, error)
+	FindStudioById(studioId int) (Studio, error)
 }
 
 type repository struct {
@@ -31,6 +32,17 @@ func (repository *repository) FindStudioByNumber(studioNumber int) (Studio, erro
 	var movieStudio Studio
 
 	err := repository.db.Where("studio_number = ?", studioNumber).Find(&movieStudio).Error
+	if (err != nil) {
+		return movieStudio, errors.New("failed to find movie studio by number")
+	}
+
+	return movieStudio, nil
+}
+
+func (repository *repository) FindStudioById(studioId int) (Studio, error) {
+	var movieStudio Studio
+
+	err := repository.db.Where("id = ?", studioId).Find(&movieStudio).Error
 	if (err != nil) {
 		return movieStudio, errors.New("failed to find movie studio by number")
 	}
