@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"movie-api/helper"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
@@ -85,8 +86,10 @@ func (service *service) GenerateToken(userId int, email string, isAdmin bool) (s
 	//* Generate token with signing method and payload
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
+	JWT_SECRET := helper.GetEnvValue("JWT_SECRET")
+
 	//* Signature token with secret text
-	signedToken, err := token.SignedString([]byte("$2a$08$UcyjEygcPA/XaeUp85sQjuOhithx14/Ai3D5lYPixLrMrSQG2NIFy"))
+	signedToken, err := token.SignedString([]byte(JWT_SECRET))
 	if (err != nil) {
 		return signedToken, err
 	}
@@ -129,7 +132,9 @@ func (service *service) ValidateToken(encodedToken string) (*jwt.Token, error) {
 			return nil, errors.New("invalid token")
 		}
 
-		return []byte("$2a$08$UcyjEygcPA/XaeUp85sQjuOhithx14/Ai3D5lYPixLrMrSQG2NIFy"), nil
+		JWT_SECRET := helper.GetEnvValue("JWT_SECRET")
+
+		return []byte(JWT_SECRET), nil
 	})
 
 	if (err != nil) {
