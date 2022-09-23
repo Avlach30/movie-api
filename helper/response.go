@@ -1,6 +1,12 @@
 package helper
 
-import "github.com/go-playground/validator/v10"
+import (
+	"errors"
+	"fmt"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/go-playground/validator/v10"
+)
 
 type ResponseSuccess struct {
 	Success bool        `json:"success"`
@@ -30,6 +36,10 @@ func ApiFailedResponse(err any) ResponseFailed {
 		Errors:  err,
 		Message: "Error has been occured!",
 	}
+
+	error := fmt.Sprintf("%s", err)
+
+	sentry.CaptureException(errors.New(error))
 
 	return res
 }
