@@ -35,6 +35,11 @@ func main() {
 	movieTagHandler := movietag.NewMovieTagHandler(movieTagService)
 
 	router := gin.Default()
+
+	sentry := config.SentryConfig(router)
+
+	router.Use(sentry)
+
 	firstVerAPI := router.Group("/api/v1")
 
 	firstVerAPI.POST("/auth/signup-customer", userHandler.SignUpHandler)
