@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `tags`;
-DROP TABLE IF EXISTS `studios`;
 DROP TABLE IF EXISTS `movie_tags`;
 DROP TABLE IF EXISTS `movie_schedules`;
+DROP TABLE IF EXISTS `tags`;
 DROP TABLE IF EXISTS `movies`;
+DROP TABLE IF EXISTS `studios`;
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `order_items`;
