@@ -82,7 +82,7 @@ func (handler *movieScheduleHandler) CreateNewMovieSchedule(context *gin.Context
 		return
 	}
 	
-	successResponse := helper.ApiSuccessResponse("Create new schedule for playing movie successfully", movieSchedule)
+	successResponse := helper.ApiSuccessResponse("Create new schedule for playing movie successfully", FormatCreateNewScheduleResponse(movieSchedule, movie, studio))
 
 	context.JSON(http.StatusCreated, successResponse)
 }
