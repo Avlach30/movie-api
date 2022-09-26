@@ -42,7 +42,7 @@ func (service *service) FindStudioByNumber(studioNumber int) (Studio, error) {
 
 func (service *service) FindStudioByID(studioId int) (Studio, error) {
 	
-	movieStudio, err := service.repository.FindStudioByNumber(studioId)
+	movieStudio, err := service.repository.FindStudioById(studioId)
 	if (err != nil) {
 		return movieStudio, errors.New("failed to find movie studio by id")
 	}
