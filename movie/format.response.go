@@ -4,6 +4,11 @@ import (
 	movietag "movie-api/movie-tag"
 )
 
+type GetMovie struct {
+	Title string `json:"title"`
+	Poster string `json:"poster"`
+}
+
 type GetEachMoviesResponse struct {
 	ID       int                        `json:"id"`
 	Title    string                     `json:"title"`
