@@ -61,7 +61,7 @@ func (handler *movieStudioHandler) CreateNewMovieStudio(context *gin.Context) {
 		return
 	}
 	
-	successResponse := helper.ApiSuccessResponse("Create new movie studio successfully", movieStudio)
+	successResponse := helper.ApiSuccessResponse("Create new movie studio successfully", FormatCreateNewStudioResponse(movieStudio))
 
 	context.JSON(http.StatusCreated, successResponse)
 }
