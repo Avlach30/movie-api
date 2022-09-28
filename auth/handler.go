@@ -28,9 +28,7 @@ func (handler *authHandler) SignUpHandler(context *gin.Context) {
 	if err != nil {
 		errors := helper.ErrorValidationResponse(err)
 
-		errorMsg := gin.H{"errors": errors}
-
-		errorResponse := helper.ApiFailedResponse(errorMsg)
+		errorResponse := helper.ApiFailedResponse(errors)
 		context.JSON(http.StatusUnprocessableEntity, errorResponse)
 		return
 	}
@@ -117,9 +115,7 @@ func (handler *authHandler) LogInHandler(context *gin.Context) {
 	if err != nil {
 		errors := helper.ErrorValidationResponse(err)
 
-		errorMsg := gin.H{"errors": errors}
-
-		errorResponse := helper.ApiFailedResponse(errorMsg)
+		errorResponse := helper.ApiFailedResponse(errors)
 		context.JSON(http.StatusUnprocessableEntity, errorResponse)
 		return
 	}
