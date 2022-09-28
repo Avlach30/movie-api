@@ -60,9 +60,7 @@ func (handler *movieHandler) CreateNewMovieWithTags(context *gin.Context) {
 	if err != nil {
 		errors := helper.ErrorValidationResponse(err)
 
-		errorMsg := gin.H{"errors": errors}
-
-		errorResponse := helper.ApiFailedResponse(errorMsg)
+		errorResponse := helper.ApiFailedResponse(errors)
 		context.JSON(http.StatusUnprocessableEntity, errorResponse)
 		return
 	}
