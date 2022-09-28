@@ -47,7 +47,9 @@ func ApiFailedResponse(err any) ResponseFailed {
 func ErrorValidationResponse(err error) []string {
 	var errors []string
 	for _, error := range err.(validator.ValidationErrors) {
-		errors = append(errors, error.Error())
+		errorValidationMsg := fmt.Sprintf("Error on field %s, condition: %s %s", error.Field(), error.ActualTag(), error.Param())
+
+		errors = append(errors, errorValidationMsg)
 	}
 
 	return errors
