@@ -18,9 +18,10 @@ func NewAuthHandler(authService Service) *authHandler {
 
 func (handler *authHandler) SignUpHandler(context *gin.Context) {
 	input := SignUpInput{
-		Name:     context.PostForm("name"),
-		Email:    context.PostForm("email"),
-		Password: context.PostForm("password"),
+		Name:        context.PostForm("name"),
+		Email:       context.PostForm("email"),
+		PhoneNumber: context.PostForm("phone_number"),
+		Password:    context.PostForm("password"),
 	}
 
 	err := context.ShouldBind(&input)
@@ -109,7 +110,7 @@ func (handler *authHandler) SignUpHandler(context *gin.Context) {
 	}
 }
 
-func (handler *authHandler) LogInHandler (context *gin.Context) {
+func (handler *authHandler) LogInHandler(context *gin.Context) {
 	var input LogInInput //* Mendefinisikan variabel dengan type LogInInput struct
 
 	err := context.ShouldBindJSON(&input) //*Konversi JSON input ke struct
@@ -130,7 +131,7 @@ func (handler *authHandler) LogInHandler (context *gin.Context) {
 		context.JSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
-	
+
 	responseFormatter := FormatUserLoginResponse(user, token)
 	successResponse := helper.ApiSuccessResponse("Log in successfully", responseFormatter)
 

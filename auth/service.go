@@ -53,6 +53,7 @@ func (service *service) SignUp(input SignUpInput, isAdmin bool) (User, error) {
 	user := User{}
 	user.Name = input.Name
 	user.Email = input.Email
+	user.PhoneNumber = input.PhoneNumber
 	user.IsAdmin = isAdmin
 
 	hashedPw, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
@@ -61,7 +62,7 @@ func (service *service) SignUp(input SignUpInput, isAdmin bool) (User, error) {
 	}
 	user.Password = string(hashedPw)
 
-	user.Avatar, err = service.UploadAvatarImage(input.Avatar)
+	user.Avatar, err = service.UploadAvatarImage("/"+input.Avatar)
 	if (err) != nil {
 		return user, errors.New("failed to upload image")
 	}
