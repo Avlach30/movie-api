@@ -3,7 +3,7 @@ package auth
 import (
 	"errors"
 	"movie-api/helper"
-
+	"movie-api/redis"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -121,6 +121,8 @@ func (service *service) LogIn(input LogInInput) (User, string, error) {
 	if err != nil {
 		return user, "", errors.New("failed to generate token")
 	}
+
+	redis.SetRedisNew("userId", user.ID)
 
 	return user, userToken, nil
 }
