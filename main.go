@@ -43,6 +43,10 @@ func main() {
 
 	router.Use(sentry)
 
+	//* Configure for accessible static file with first param is router and second param is directory of static file
+	router.Static("/avatar", "./avatar")
+	router.Static("/movie-poster", "./movie-poster")
+
 	firstVerAPI := router.Group("/api/v1")
 
 	firstVerAPI.POST("/auth/signup-customer", userHandler.SignUpHandler)
