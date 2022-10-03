@@ -1,11 +1,12 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"movie-api/helper"
+	"movie-api/redis"
 	"net/http"
 	"path/filepath"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type authHandler struct {
@@ -130,6 +131,30 @@ func (handler *authHandler) LogInHandler(context *gin.Context) {
 
 	responseFormatter := FormatUserLoginResponse(user, token)
 	successResponse := helper.ApiSuccessResponse("Log in successfully", responseFormatter)
+
+	context.JSON(http.StatusOK, successResponse)
+}
+
+func (handler *authHandler) GetLoggedUserHandler(context *gin.Context) {
+	//* Calling service for get value from redis key
+	loggedUserId, err := redis.GetRedisFromKey("userId")
+	if err != nil {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+
+		context.JSON(http.StatusUnauthorized, errorResponse)
+		return
+	}
+
+	user, err := handler.authService.FindUserById(loggedUserId)
+	if err != nil {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+
+		context.JSON(http.StatusNotFound, errorResponse)
+		return
+	}
+
+	responseFormatter := FormatGetLoggedUserResponse(user)
+	successResponse := helper.ApiSuccessResponse("Get logged user successfully", responseFormatter)
 
 	context.JSON(http.StatusOK, successResponse)
 }
