@@ -42,3 +42,17 @@ func FormatUserLoginResponse(user User, token string) LoginResponse {
 
 	return format
 }
+
+func FormatGetLoggedUserResponse(user User) SignUpResponse {
+	IntPhoneNumber, _ := strconv.Atoi(user.PhoneNumber)
+
+	format := SignUpResponse{
+		ID:          user.ID,
+		Name:        user.Name,
+		Email:       user.Email,
+		PhoneNumber: IntPhoneNumber,
+		Avatar:      user.Avatar,
+	}
+
+	return format
+}
