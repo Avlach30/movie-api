@@ -5,6 +5,7 @@ import (
 	"movie-api/config"
 	"movie-api/middleware"
 	"movie-api/movie"
+	"movie-api/redis"
 	moviestudio "movie-api/movie-studio"
 	movieschedule "movie-api/movie-schedule"
 	movietag "movie-api/movie-tag"
@@ -34,6 +35,8 @@ func main() {
 	movieTagService := movietag.NewService(movieTagRepository)
 	movieTagHandler := movietag.NewMovieTagHandler(movieTagService)
 
+	redis.RedisConnect()
+
 	router := gin.Default()
 
 	sentry := config.SentryConfig(router)
@@ -45,6 +48,8 @@ func main() {
 	firstVerAPI.POST("/auth/signup-customer", userHandler.SignUpHandler)
 	firstVerAPI.POST("/auth/admin/signup", userHandler.SignUpHandler)
 	firstVerAPI.POST("/auth/login", userHandler.LogInHandler)
+
+	firstVerAPI.GET("/profile", userHandler.GetLoggedUserHandler)
 
 	firstVerAPI.GET("/movies", movieHandler.GetAllMovieWithTags)
 
