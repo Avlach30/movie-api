@@ -9,6 +9,7 @@ import (
 	moviestudio "movie-api/movie-studio"
 	movieschedule "movie-api/movie-schedule"
 	movietag "movie-api/movie-tag"
+	taskscheduler "movie-api/task-scheduler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,6 +43,8 @@ func main() {
 	sentry := config.SentryConfig(router)
 
 	router.Use(sentry)
+
+	taskscheduler.NewSchedule()
 
 	//* Configure for accessible static file with first param is router and second param is directory of static file
 	router.Static("/avatar", "./avatar")
