@@ -83,7 +83,7 @@ func (handler *authHandler) SignUpHandler(context *gin.Context) {
 	endpoint := context.Request.URL.String()
 
 	if endpoint == "/api/v1/auth/signup-customer" {
-		user, err := handler.authService.SignUp(input, false)
+		user, err := handler.authService.SignUp(input, false, "view-only")
 		if err != nil {
 			errorResponse := helper.ApiFailedResponse(err.Error())
 			context.JSON(http.StatusBadRequest, errorResponse)
@@ -95,7 +95,7 @@ func (handler *authHandler) SignUpHandler(context *gin.Context) {
 
 		context.JSON(http.StatusCreated, successResponse)
 	} else {
-		user, err := handler.authService.SignUp(input, true)
+		user, err := handler.authService.SignUp(input, true, "full-control")
 		if err != nil {
 			errorResponse := helper.ApiFailedResponse(err.Error())
 			context.JSON(http.StatusBadRequest, errorResponse)
