@@ -9,13 +9,14 @@ import (
 )
 
 type Service interface {
-	SignUp(input SignUpInput, isAdmin bool) (User, error)
+	SignUp(input SignUpInput, isAdmin bool, role string) (User, error)
 	CheckUserAvailabilityByEmail(input SignUpInput) (bool, error)
 	UploadAvatarImage(fileLocation string) (string, error)
 	LogIn(input LogInInput) (User, string, error)
 	GenerateToken(userId int, email string, isAdmin bool) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
 	FindUserById(id int) (User, error)
+	FindRoleUserById(userId int) (UserRole, error)
 }
 
 type service struct {
@@ -49,7 +50,7 @@ func (service *service) CheckUserAvailabilityByEmail(input SignUpInput) (bool, e
 	return false, nil
 }
 
-func (service *service) SignUp(input SignUpInput, isAdmin bool) (User, error) {
+func (service *service) SignUp(input SignUpInput, isAdmin bool, role string) (User, error) {
 	user := User{}
 	user.Name = input.Name
 	user.Email = input.Email
@@ -68,6 +69,11 @@ func (service *service) SignUp(input SignUpInput, isAdmin bool) (User, error) {
 	}
 
 	newUser, err := service.repository.SignUp(user)
+	if err != nil {
+		return newUser, err
+	}
+
+	err = service.repository.SaveNewUserRole(newUser, role)
 	if err != nil {
 		return newUser, err
 	}
@@ -159,4 +165,17 @@ func (service *service) FindUserById(id int) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (service *service) FindRoleUserById(userId int) (UserRole, error) {
+	roleUser, err := service.repository.FindUserRoleById(userId)
+	if (err != nil) {
+		return roleUser, err
+	} 
+
+	if (roleUser.ID == 0) {
+		return roleUser, errors.New("sorry, cannot find role user from user with that id")
+	}
+
+	return roleUser, nil
 }
