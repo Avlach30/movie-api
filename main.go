@@ -22,15 +22,15 @@ func main() {
 
 	movieRepository := movie.NewRepository(db)
 	movieService := movie.NewService(movieRepository)
-	movieHandler := movie.NewMovieHandler(movieService)
+	movieHandler := movie.NewMovieHandler(movieService, userService)
 
 	movieStudioRepository := moviestudio.NewRepository(db)
 	movieStudioService := moviestudio.NewService(movieStudioRepository)
-	movieStudioHandler := moviestudio.NewMovieStudioHandler(movieStudioService)
+	movieStudioHandler := moviestudio.NewMovieStudioHandler(movieStudioService, userService)
 
 	movieScheduleRepository := movieschedule.NewRepository(db)
 	movieScheduleService := movieschedule.NewService(movieScheduleRepository)
-	movieScheduleHandler := movieschedule.NewMovieScheduleHandler(movieScheduleService, movieService, movieStudioService)
+	movieScheduleHandler := movieschedule.NewMovieScheduleHandler(movieScheduleService, movieService, movieStudioService, userService)
 
 	movieTagRepository := movietag.NewRepository(db)
 	movieTagService := movietag.NewService(movieTagRepository)
