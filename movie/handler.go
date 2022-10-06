@@ -5,16 +5,18 @@ import (
 	"movie-api/helper"
 	"net/http"
 	"path/filepath"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type movieHandler struct {
 	service Service
+	authService auth.Service
 }
 
-func NewMovieHandler(service Service) *movieHandler {
-	return &movieHandler{service}
+func NewMovieHandler(service Service, authService auth.Service) *movieHandler {
+	return &movieHandler{service, authService}
 }
 
 func (handler *movieHandler) GetAllMovieWithTags(context *gin.Context) {
@@ -44,7 +46,14 @@ func (handler *movieHandler) GetAllMovieWithTags(context *gin.Context) {
 func (handler *movieHandler) CreateNewMovieWithTags(context *gin.Context) {
 	loggedUser := context.MustGet("user").(auth.User)
 
-	if (!loggedUser.IsAdmin) {
+	roleUser, err := handler.authService.FindRoleUserById(loggedUser.ID)
+	if (err != nil) {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+		context.JSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if (roleUser.Role != "full-control") {
 		errorResponse := helper.ApiFailedResponse("Sorry!, only admin can create new movie")
 		context.JSON(http.StatusForbidden, errorResponse)
 		return
@@ -56,7 +65,7 @@ func (handler *movieHandler) CreateNewMovieWithTags(context *gin.Context) {
 		PlayUntil: context.PostForm("play_until"),
 	}
 
-	err := context.ShouldBind(&input)
+	err = context.ShouldBind(&input)
 	if err != nil {
 		errors := helper.ErrorValidationResponse(err)
 

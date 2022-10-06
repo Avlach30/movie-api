@@ -9,16 +9,24 @@ import (
 
 type movieStudioHandler struct {
 	movieStudioService Service
+	authService auth.Service
 }
 
-func NewMovieStudioHandler(movieStudioService Service) *movieStudioHandler {
-	return &movieStudioHandler{movieStudioService}
+func NewMovieStudioHandler(movieStudioService Service, authService auth.Service) *movieStudioHandler {
+	return &movieStudioHandler{movieStudioService, authService}
 }
 
 func (handler *movieStudioHandler) CreateNewMovieStudio(context *gin.Context) {
 	loggedUser := context.MustGet("user").(auth.User)
 
-	if (!loggedUser.IsAdmin) {
+	roleUser, err := handler.authService.FindRoleUserById(loggedUser.ID)
+	if (err != nil) {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+		context.JSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if (roleUser.Role != "full-control") {
 		errorResponse := helper.ApiFailedResponse("Sorry!, only admin can create new movie studio")
 		context.JSON(http.StatusForbidden, errorResponse)
 		return
@@ -26,7 +34,7 @@ func (handler *movieStudioHandler) CreateNewMovieStudio(context *gin.Context) {
 
 	var input CreateNewStudioInput
 
-	err := context.ShouldBindJSON(&input)
+	err = context.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ErrorValidationResponse(err)
 

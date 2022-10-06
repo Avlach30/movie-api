@@ -13,16 +13,24 @@ type movieScheduleHandler struct {
 	movieScheduleService Service
 	movieService movie.Service
 	movieStudioService moviestudio.Service
+	authService auth.Service
 }
 
-func NewMovieScheduleHandler(movieScheduleService Service, movieService movie.Service, movieStudioService moviestudio.Service) *movieScheduleHandler {
-	return &movieScheduleHandler{movieScheduleService, movieService, movieStudioService}
+func NewMovieScheduleHandler(movieScheduleService Service, movieService movie.Service, movieStudioService moviestudio.Service, authService auth.Service) *movieScheduleHandler {
+	return &movieScheduleHandler{movieScheduleService, movieService, movieStudioService, authService}
 }
 
 func (handler *movieScheduleHandler) CreateNewMovieSchedule(context *gin.Context) {
 	loggedUser := context.MustGet("user").(auth.User)
 
-	if (!loggedUser.IsAdmin) {
+	roleUser, err := handler.authService.FindRoleUserById(loggedUser.ID)
+	if (err != nil) {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+		context.JSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if (roleUser.Role != "full-control") {
 		errorResponse := helper.ApiFailedResponse("Sorry!, only admin can create new schedule for playing movie")
 		context.JSON(http.StatusForbidden, errorResponse)
 		return
@@ -30,7 +38,7 @@ func (handler *movieScheduleHandler) CreateNewMovieSchedule(context *gin.Context
 
 	var input CreateNewScheduleInput
 
-	err := context.ShouldBindJSON(&input)
+	err = context.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ErrorValidationResponse(err)
 
