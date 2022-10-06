@@ -14,3 +14,9 @@ type User struct {
 	UpdatedAt   time.Time
 	DeletedAt   time.Time
 }
+
+type UserRole struct {
+	ID     int
+	UserId int
+	Role   string
+}
