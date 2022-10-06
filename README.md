@@ -15,4 +15,7 @@ you can change 'nameMigrationProcess' as your desired
  3. Insert All SQL query for updating database as your desired in file nameMigrationProcess.up.sql
  4. You can run up migration for update database structure with command in terminal  
 migrate -path db/migration -database "mysql://mysql-user:mysql-password@tcp(localhost:3306)/database-name" -verbose up  
- mysql-user, mysql-password, and database-name is customized from your configuration
+ mysql-user, mysql-password, and database-name is customized from your configuration  
+ 5. If error cause `error: Dirty database version errorVer. Fix and force version.` when your run migration. You can solve it by command for running previeous query  
+ migrate -path db/migration -database "mysql://root:rootPassword!@tcp(localhost:3306)/movie-api-onboarding" force prevVer -verbose up  
+ prevVer is number previous version of migration error from errorVer
