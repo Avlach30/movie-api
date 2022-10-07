@@ -1,6 +1,8 @@
 package movieschedule
 
 import (
+	"movie-api/movie"
+	moviestudio "movie-api/movie-studio"
 	"time"
 )
 
@@ -15,4 +17,6 @@ type MovieSchedule struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time
+	Movie     movie.Movie
+	Studio    moviestudio.Studio
 }
