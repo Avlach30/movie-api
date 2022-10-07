@@ -2,6 +2,7 @@ package movieschedule
 
 type Service interface {
 	SaveNewMovieSchedule(input CreateNewScheduleInput) (MovieSchedule, error)
+	FetchPlayingNowSchedule() ([]MovieSchedule, error)
 }
 
 type service struct {
@@ -29,4 +30,13 @@ func (service *service) SaveNewMovieSchedule(input CreateNewScheduleInput) (Movi
 	}
 
 	return newSchedule, nil
+}
+
+func (service *service) FetchPlayingNowSchedule() ([]MovieSchedule, error) {
+	playingNowSchedules, err := service.repository.GetPlayingNowSchedule()
+	if (err != nil) {
+		return playingNowSchedules, err
+	}
+
+	return playingNowSchedules, nil
 }
