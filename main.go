@@ -59,6 +59,7 @@ func main() {
 	firstVerAPI.GET("/profile", userHandler.GetLoggedUserHandler)
 
 	firstVerAPI.GET("/movies", movieHandler.GetAllMovieWithTags)
+	firstVerAPI.GET("/movies/now-playing", middleware.AuthorizationMiddleware(userService), movieScheduleHandler.GetPlayingNowSchedule)
 
 	firstVerAPI.GET("/backoffice/movies",  middleware.AuthorizationMiddleware(userService), movieHandler.GetAllMovieWithTags)
 	firstVerAPI.POST("/backoffice/movies", middleware.AuthorizationMiddleware(userService), movieHandler.CreateNewMovieWithTags)
