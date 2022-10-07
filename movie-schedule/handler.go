@@ -6,6 +6,7 @@ import (
 	"movie-api/movie"
 	moviestudio "movie-api/movie-studio"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -91,4 +92,25 @@ func (handler *movieScheduleHandler) CreateNewMovieSchedule(context *gin.Context
 	successResponse := helper.ApiSuccessResponse("Create new schedule for playing movie successfully", FormatCreateNewScheduleResponse(movieSchedule, movie, studio))
 
 	context.JSON(http.StatusCreated, successResponse)
+}
+
+func (handler *movieScheduleHandler) GetPlayingNowSchedule(context *gin.Context) {
+	loggedUser := context.MustGet("user").(auth.User)
+
+	//* If logged user not found (invalid token / authorization header)
+	if (loggedUser.ID == 0) {
+		errorResponse := helper.ApiFailedResponse("Unauthorized")
+		context.JSON(http.StatusUnauthorized, errorResponse)
+		return
+	}
+
+	playingNowSchedules, err := handler.movieScheduleService.FetchPlayingNowSchedule()
+	if (err != nil) {
+		errorResponse := helper.ApiFailedResponse(err.Error())
+		context.JSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	response := helper.ApiSuccessResponse("Get all playing now schedule successfully", FormatGetPlayingNowSchedulesResponse(playingNowSchedules))
+	context.JSON(http.StatusOK, response)
 }
